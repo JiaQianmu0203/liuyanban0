@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>留言板</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+        body{max-width:700px;margin:30px auto;padding:0 20px;background:#f5f7fa}
+        .card{background:#fff;padding:25px;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08)}
+        h1{text-align:center;margin-bottom:20px;color:#333}
+        input,textarea{width:100%;padding:12px;margin:8px 0;border:1px solid #eee;border-radius:8px;font-size:16px}
+        button{width:100%;padding:14px;background:#409eff;color:#fff;border:none;border-radius:8px;font-size:16px;margin-top:5px;cursor:pointer}
+        button:hover{background:#337ecc}
+        .line{height:1px;background:#eee;margin:25px 0}
+        .msg{padding:15px;border-bottom:1px solid #f5f5f5}
+        .name{font-weight:bold;color:#409eff;margin-bottom:5px}
+        .content{color:#333;line-height:1.5;margin-bottom:5px}
+        .time{font-size:12px;color:#999}
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>💬 留言板</h1>
+        <input type="text" id="name" placeholder="输入昵称">
+        <textarea id="content" rows="4" placeholder="输入留言内容"></textarea>
+        <button onclick="post()">发布留言</button>
+
+        <div class="line"></div>
+        <div id="list"></div>
+    </div>
+
+    <script>
+        function render(){
+            let list = JSON.parse(localStorage.getItem("msgs")||"[]")
+            let html = ""
+            list.forEach(m => {
+                html+=`
+                <div class="msg">
+                    <div class="name">${m.name}</div>
+                    <div class="content">${m.content}</div>
+                    <div class="time">${m.time}</div>
+                </div>
+                `
+            })
+            document.getElementById("list").innerHTML = html || "<p>暂无留言</p>"
+        }
+
+        function post(){
+            let name = document.getElementById("name").value.trim()
+            let content = document.getElementById("content").value.trim()
+            if(!name || !content){alert("昵称和内容不能为空");return}
+            let time = new Date().toLocaleString()
+            let msgs = JSON.parse(localStorage.getItem("msgs")||"[]")
+            msgs.unshift({name,content,time})
+            localStorage.setItem("msgs",JSON.stringify(msgs))
+            alert("发布成功！")
+            document.getElementById("name").value=""
+            document.getElementById("content").value=""
+            render()
+        }
+        window.onload=render
+    </script>
+</body>
+</html>
